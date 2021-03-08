@@ -11,16 +11,16 @@
 
 # New VMs var
 # Zone ID of the new VM.
-# cmd: cloudmonkey list zones filter=name,id
+# cmd:  list zones filter=name,id
 zoneid=""
 # Template ID for the new VM.
-# cmd: cloudmonkey list templates templatefilter=all filter=name,id
+# cmd: bashscript list templates templatefilter=all filter=name,id
 templateid=""
 # Serviceoffering ID for the new VM.
-# cmd: cloudmonkey list serviceofferings filter=name,id
+# cmd: bashcript list serviceofferings filter=name,id
 serviceofferingid=""
 # Networks IDs for the new VM.
-# cmd: cloudmonkey list networks filter=name,id
+# cmd: bashscript list networks filter=name,id
 networkids=""
 
 # Input var
@@ -34,11 +34,11 @@ vms="$2"
 if [ "$action" == "stats" ]; then
 
 	#Stats
-	running="$(cloudmonkey list virtualmachines filter=id,state | grep Running | grep -Phro [a-f,0-9]{8}-[a-f,0-9]{4}-[a-f,0-9]{4}-[a-f,0-9]{4}-[a-f,0-9]{12} | wc -l)"
-	stopped="$(cloudmonkey list virtualmachines filter=id,state | grep Stopped | grep -Phro [a-f,0-9]{8}-[a-f,0-9]{4}-[a-f,0-9]{4}-[a-f,0-9]{4}-[a-f,0-9]{12} | wc -l)"
-	starting="$(cloudmonkey list virtualmachines filter=id,state | grep Starting | grep -Phro [a-f,0-9]{8}-[a-f,0-9]{4}-[a-f,0-9]{4}-[a-f,0-9]{4}-[a-f,0-9]{12} | wc -l)"
-	stopping="$(cloudmonkey list virtualmachines filter=id,state | grep Stopping | grep -Phro [a-f,0-9]{8}-[a-f,0-9]{4}-[a-f,0-9]{4}-[a-f,0-9]{4}-[a-f,0-9]{12} | wc -l)"
-	vmerror="$(cloudmonkey list virtualmachines filter=id,state | grep Error | grep -Phro [a-f,0-9]{8}-[a-f,0-9]{4}-[a-f,0-9]{4}-[a-f,0-9]{4}-[a-f,0-9]{12} | wc -l)"
+	running="$(bashscript list virtualmachines filter=id,state | grep Running | grep -Phro [a-f,0-9]{8}-[a-f,0-9]{4}-[a-f,0-9]{4}-[a-f,0-9]{4}-[a-f,0-9]{12} | wc -l)"
+	stopped="$(bashscript list virtualmachines filter=id,state | grep Stopped | grep -Phro [a-f,0-9]{8}-[a-f,0-9]{4}-[a-f,0-9]{4}-[a-f,0-9]{4}-[a-f,0-9]{12} | wc -l)"
+	starting="$(bashscript list virtualmachines filter=id,state | grep Starting | grep -Phro [a-f,0-9]{8}-[a-f,0-9]{4}-[a-f,0-9]{4}-[a-f,0-9]{4}-[a-f,0-9]{12} | wc -l)"
+	stopping="$(bashscript list virtualmachines filter=id,state | grep Stopping | grep -Phro [a-f,0-9]{8}-[a-f,0-9]{4}-[a-f,0-9]{4}-[a-f,0-9]{4}-[a-f,0-9]{12} | wc -l)"
+	vmerror="$(bashscript list virtualmachines filter=id,state | grep Error | grep -Phro [a-f,0-9]{8}-[a-f,0-9]{4}-[a-f,0-9]{4}-[a-f,0-9]{4}-[a-f,0-9]{12} | wc -l)"
 	echo Number of Running VMs: "${running}"
 	echo Number of Stopped VMs: "${stopped}"
 	echo Number of Starting VMs: "${starting}"
@@ -50,16 +50,16 @@ elif [ "$action" == "startall" ]; then
 	#Start All Stopped VMs
 	while read -r line ; do
 		echo "Starting VM id: $line"
-		cloudmonkey start virtualmachine id=$line > /dev/null 2>&1 &
-	done < <(cloudmonkey list virtualmachines filter=id,state | grep Stopped | grep -Phro [a-f,0-9]{8}-[a-f,0-9]{4}-[a-f,0-9]{4}-[a-f,0-9]{4}-[a-f,0-9]{12})
+		bashscript start virtualmachine id=$line > /dev/null 2>&1 &
+	done < <(bashscript list virtualmachines filter=id,state | grep Stopped | grep -Phro [a-f,0-9]{8}-[a-f,0-9]{4}-[a-f,0-9]{4}-[a-f,0-9]{4}-[a-f,0-9]{12})
 
 elif [ "$action" == "stopall" ]; then
 
 	#Stop All Running VMs
 	while read -r line ; do
 		echo "Stopping VM id: $line"
-		cloudmonkey stop virtualmachine id=$line > /dev/null 2>&1 &
-	done < <(cloudmonkey list virtualmachines filter=id,state | grep Running | grep -Phro [a-f,0-9]{8}-[a-f,0-9]{4}-[a-f,0-9]{4}-[a-f,0-9]{4}-[a-f,0-9]{12})
+		bashscript stop virtualmachine id=$line > /dev/null 2>&1 &
+	done < <(bashscript list virtualmachines filter=id,state | grep Running | grep -Phro [a-f,0-9]{8}-[a-f,0-9]{4}-[a-f,0-9]{4}-[a-f,0-9]{4}-[a-f,0-9]{12})
 
 elif [ "$action" == "destroyall" ]; then
 
@@ -70,8 +70,8 @@ elif [ "$action" == "destroyall" ]; then
 		#Destroy All VMs
 		while read -r line ; do
 			echo "Destroing VM id: $line"
-			cloudmonkey destroy virtualmachine id=$line expunge=true > /dev/null 2>&1 &
-		done < <(cloudmonkey list virtualmachines filter=id,state | grep -Phro [a-f,0-9]{8}-[a-f,0-9]{4}-[a-f,0-9]{4}-[a-f,0-9]{4}-[a-f,0-9]{12})
+			bashscript destroy virtualmachine id=$line expunge=true > /dev/null 2>&1 &
+		done < <(bashscript list virtualmachines filter=id,state | grep -Phro [a-f,0-9]{8}-[a-f,0-9]{4}-[a-f,0-9]{4}-[a-f,0-9]{4}-[a-f,0-9]{12})
 
 	fi
 
@@ -84,8 +84,8 @@ elif [ "$action" == "destroyerror" ]; then
                 #Destroy All VMs in error state
                 while read -r line ; do
                         echo "Destroing VM id: $line"
-                        cloudmonkey destroy virtualmachine id=$line expunge=true > /dev/null 2>&1 &
-                done < <(cloudmonkey list virtualmachines filter=id,state | grep Error | grep -Phro [a-f,0-9]{8}-[a-f,0-9]{4}-[a-f,0-9]{4}-[a-f,0-9]{4}-[a-f,0-9]{12})
+                        bashscript destroy virtualmachine id=$line expunge=true > /dev/null 2>&1 &
+                done < <(bashscript list virtualmachines filter=id,state | grep Error | grep -Phro [a-f,0-9]{8}-[a-f,0-9]{4}-[a-f,0-9]{4}-[a-f,0-9]{4}-[a-f,0-9]{12})
 
         fi
 
@@ -98,36 +98,36 @@ elif [ "$action" == "create" ]; then
 		#Create VMs + Stats
 		printf "\nCreating $vms VMs ...\n"
         	for (( c=1; c<=$vms; c++)) ;
-			do cloudmonkey deploy virtualmachine zoneid=$zoneid templateid=$templateid serviceofferingid=$serviceofferingid networkids=$networkids > /dev/null 2>&1 &
+			do bashscript deploy virtualmachine zoneid=$zoneid templateid=$templateid serviceofferingid=$serviceofferingid networkids=$networkids > /dev/null 2>&1 &
 			done
 		fi
 
 elif [ "$action" == "list" ]; then
 
 	echo "Zones List:"
-	cloudmonkey list zones filter=name,id
+	bashscript list zones filter=name,id
 	echo "Templates List:"
-	cloudmonkey list templates templatefilter=all filter=name,id
+	bashscript list templates templatefilter=all filter=name,id
 	echo "Service Offerings List:"
-	cloudmonkey list serviceofferings filter=name,id
+	bashscript list serviceofferings filter=name,id
 	echo "Networks List:"
-	cloudmonkey list networks filter=name,id
+	bashscript list networks filter=name,id
 
 elif [ "$action" == "cluster" ]; then
 
         echo "Clusters List:"
-	cloudmonkey list clusters filter=allocationstate,clustertype,hypervisortype,managedstate,name,podname,zonename
+	bashscript list clusters filter=allocationstate,clustertype,hypervisortype,managedstate,name,podname,zonename
         echo "Hosts List:"
-	cloudmonkey list hosts filter=name,clustername,clustertype,resourcestate,state
+	bashscript list hosts filter=name,clustername,clustertype,resourcestate,state
 
 elif [ "$action" == "capacity" ]; then
 
         echo "Capacity: (capacity.skipcounting.hours and restart mgmt server)"
-        cloudmonkey list capacity
+        bashscript list capacity
 
 else
 
-	echo "Cloudzor Help:"
+	echo "bashscript Help:"
 	echo "stats - Display VMs stats"
 	echo "startall - Start all VMs of the current account"
 	echo "stopall - Stop all VMs of the current account"
