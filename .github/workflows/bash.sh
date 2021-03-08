@@ -1,10 +1,5 @@
 
-
-
-
-
-
-#!/bi/bash
+#!/bin/bash
 # Capablities:
 # - VM Stats
 # - Create n VM
